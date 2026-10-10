@@ -2,14 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { PanelLeftClose, X } from "lucide-react";
+import { X } from "lucide-react";
 import { ChatHeader } from "@/components/layout/ChatHeader";
 import { MobileDrawer } from "@/components/layout/MobileDrawer";
+import { SettingsDialog } from "@/components/sidebar/SettingsDialog";
 import { SidebarContent } from "@/components/sidebar/SidebarContent";
 import { GlassButton } from "@/components/ui/GlassButton";
 import { GlassModal } from "@/components/ui/GlassModal";
 import { GlassPanel } from "@/components/ui/GlassPanel";
-import { useConversations } from "@/hooks/useConversations";
+import type { Conversation } from "@/types/chat";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 const SIDEBAR_WIDTH = 288;
 const SIDEBAR_GAP = 16;
@@ -17,37 +19,51 @@ const SIDEBAR_GAP = 16;
 type AppShellProps = {
   children: React.ReactNode;
   composer: React.ReactNode;
+  conversations: Conversation[];
+  activeConversation: Conversation | null;
+  onSelectConversation: (id: string) => void;
+  onNewChat: () => void;
+  onRenameConversation: (id: string, title: string) => void;
+  onDeleteConversation: (id: string) => void;
 };
 
-export function AppShell({ children, composer }: AppShellProps) {
-  const {
-    conversations,
-    activeConversation,
-    selectConversation,
-    startNewChat,
-    renameConversation,
-    removeConversation,
-  } = useConversations();
-
+export function AppShell({
+  children,
+  composer,
+  conversations,
+  activeConversation,
+  onSelectConversation,
+  onNewChat,
+  onRenameConversation,
+  onDeleteConversation,
+}: AppShellProps) {
+  const { settings } = useAppSettings();
+  const isVietnamese = settings.language === "vi";
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [searchFocusRequest, setSearchFocusRequest] = useState(0);
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
   const handleSelect = (id: string) => {
-    selectConversation(id);
+    onSelectConversation(id);
     setDrawerOpen(false);
   };
 
   const handleNewChat = () => {
-    startNewChat();
+    onNewChat();
     setDrawerOpen(false);
   };
 
+  const handleOpenSettings = () => {
+    setDrawerOpen(false);
+    setSettingsOpen(true);
+  };
+
   const confirmDelete = () => {
-    if (deleteTargetId) removeConversation(deleteTargetId);
+    if (deleteTargetId) onDeleteConversation(deleteTargetId);
     setDeleteTargetId(null);
   };
 
@@ -87,8 +103,9 @@ export function AppShell({ children, composer }: AppShellProps) {
     activeId: activeConversation?.id ?? null,
     onNewChat: handleNewChat,
     onSelect: handleSelect,
-    onRename: renameConversation,
+    onRename: onRenameConversation,
     onRequestDelete: setDeleteTargetId,
+    onOpenSettings: handleOpenSettings,
   };
 
   return (
@@ -104,19 +121,9 @@ export function AppShell({ children, composer }: AppShellProps) {
         inert={desktopCollapsed}
         className="hidden shrink-0 overflow-hidden lg:block"
       >
-        <GlassPanel className="h-full w-72">
+        <GlassPanel className="h-full w-full min-w-0 overflow-hidden">
           <SidebarContent
             {...sidebarProps}
-            headerAction={
-              <GlassButton
-                variant="ghost"
-                aria-label="Collapse sidebar"
-                onClick={() => setDesktopCollapsed(true)}
-                className="h-9 w-9 px-0"
-              >
-                <PanelLeftClose size={18} />
-              </GlassButton>
-            }
           />
         </GlassPanel>
       </motion.aside>
@@ -158,18 +165,23 @@ export function AppShell({ children, composer }: AppShellProps) {
       <GlassModal
         open={deleteTargetId !== null}
         onClose={() => setDeleteTargetId(null)}
-        title="Delete conversation?"
+        title={isVietnamese ? "Xóa cuộc trò chuyện?" : "Delete conversation?"}
       >
         <p className="text-sm text-fg-muted">
-          This conversation will be permanently deleted. This cannot be undone.
+          {isVietnamese
+            ? "Cuộc trò chuyện sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác thao tác này."
+            : "This conversation will be permanently deleted. This cannot be undone."}
         </p>
         <div className="mt-5 flex justify-end gap-3">
-          <GlassButton onClick={() => setDeleteTargetId(null)}>Cancel</GlassButton>
+          <GlassButton onClick={() => setDeleteTargetId(null)}>
+            {isVietnamese ? "Hủy" : "Cancel"}
+          </GlassButton>
           <GlassButton variant="danger" onClick={confirmDelete}>
-            Delete
+            {isVietnamese ? "Xóa" : "Delete"}
           </GlassButton>
         </div>
       </GlassModal>
+      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   );
 }

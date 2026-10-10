@@ -8,6 +8,7 @@ import {
   Puzzle,
   type LucideIcon,
 } from "lucide-react";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 type Suggestion = {
   title: string;
@@ -48,6 +49,16 @@ type EmptyStateProps = {
 };
 
 export function EmptyState({ onSelectPrompt }: EmptyStateProps) {
+  const { settings } = useAppSettings();
+  const isVietnamese = settings.language === "vi";
+  const suggestions = isVietnamese
+    ? [
+        { title: "Giải thích một chủ đề", hint: "Diễn giải đơn giản, dễ hiểu", prompt: "Giải thích cách Internet hoạt động bằng ngôn ngữ đơn giản.", icon: Lightbulb },
+        { title: "Soạn nội dung", hint: "Email, bài luận, chú thích", prompt: "Viết email lịch sự xin giáo viên gia hạn thời hạn nộp bài.", icon: PenLine },
+        { title: "Giải quyết vấn đề", hint: "Phân tích từng bước", prompt: "Giúp tôi giải quyết vấn đề này từng bước: ", icon: Puzzle },
+        { title: "Phân tích văn bản", hint: "Tóm tắt hoặc nhận xét nội dung", prompt: "Tóm tắt các ý chính của văn bản sau: ", icon: FileSearch },
+      ]
+    : SUGGESTIONS;
   return (
     <div className="flex h-full flex-col overflow-y-auto p-4 sm:p-6">
       <motion.div
@@ -57,14 +68,18 @@ export function EmptyState({ onSelectPrompt }: EmptyStateProps) {
         className="m-auto w-full max-w-2xl text-center"
       >
         <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          How can I help you?
+          {isVietnamese
+            ? "Brimstone đây. Có việc gì cần triển khai, đồng chí cứ nói."
+            : "Brimstone here. State the objective, and we'll get moving."}
         </h2>
         <p className="mt-2 text-fg-muted">
-          Ask anything, explore ideas, or get things done.
+          {isVietnamese
+            ? "Báo cáo tình hình hoặc mục tiêu. Tôi sẽ đưa ra phương án rõ ràng, chính xác."
+            : "Report the situation or objective. I'll provide a clear, precise plan."}
         </p>
 
         <div className="mt-8 grid gap-3 text-left sm:grid-cols-2">
-          {SUGGESTIONS.map(({ title, hint, prompt, icon: Icon }, index) => (
+          {suggestions.map(({ title, hint, prompt, icon: Icon }, index) => (
             <motion.div
               key={title}
               initial={{ opacity: 0, y: 10 }}

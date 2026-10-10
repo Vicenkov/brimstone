@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { GlassButton } from "@/components/ui/GlassButton";
 import { cn } from "@/lib/utils/cn";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import type { ChatStatus } from "@/types/chat";
 
 export type ComposerHandle = {
@@ -43,6 +44,8 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
     ref,
   ) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const { settings } = useAppSettings();
+    const isVietnamese = settings.language === "vi";
 
     const isBusy = status !== "idle";
     const canSend = value.trim().length > 0 && !isBusy && !disabled;
@@ -115,14 +118,9 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
     return (
       <div
         className={cn(
-  "composer-textarea",
-  "block w-full resize-none bg-transparent",
-  "px-3 pb-12 pt-2.5 pr-3",
-  "text-[15px] leading-6",
-  "outline-none",
-  "placeholder:text-fg-muted",
-  "disabled:cursor-not-allowed disabled:opacity-60",
-)}
+          "composer-textarea relative w-full rounded-2xl p-3",
+          isBusy && "is-generating",
+        )}
       >
         <textarea
           ref={textareaRef}
@@ -132,26 +130,26 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
           onInput={resizeTextarea}
           disabled={disabled}
           rows={1}
-          placeholder="Message AI..."
-          aria-label="Message"
+          placeholder={isVietnamese ? "Nhắn tin cho AI..." : "Message AI..."}
+          aria-label={isVietnamese ? "Tin nhắn" : "Message"}
           className={cn(
             "block w-full resize-none bg-transparent",
-            "px-3 pb-12 pt-2.5 pr-3",
-            "text-[15px] leading-6",
+            "min-h-10 px-3 py-2",
+            "text-[length:var(--chat-font-size)] leading-6",
             "outline-none",
             "placeholder:text-fg-muted",
             "disabled:cursor-not-allowed disabled:opacity-60",
           )}
         />
 
-        <div className="absolute inset-x-2 bottom-2 flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2 px-1 pb-1">
           <div className="flex items-center gap-1">
             <GlassButton
               type="button"
               variant="ghost"
-              aria-label="Add attachment"
+              aria-label={isVietnamese ? "Thêm tệp đính kèm" : "Add attachment"}
               disabled={isBusy}
-              className="h-9 w-9 rounded-full px-0"
+              className="composer-action h-9 w-9 rounded-full px-0"
               onClick={() => {
                 // File attachment sẽ được nối ở phase sau.
               }}
@@ -162,9 +160,9 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
             <GlassButton
               type="button"
               variant="ghost"
-              aria-label="Voice input"
+              aria-label={isVietnamese ? "Nhập bằng giọng nói" : "Voice input"}
               disabled={isBusy}
-              className="h-9 w-9 rounded-full px-0"
+              className="composer-action h-9 w-9 rounded-full px-0"
               onClick={() => {
                 // Voice input sẽ được nối ở phase sau.
               }}
@@ -177,9 +175,9 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
             <GlassButton
               type="button"
               variant="ghost"
-              aria-label="Stop generating"
+              aria-label={isVietnamese ? "Dừng tạo câu trả lời" : "Stop generating"}
               onClick={onStop}
-              className="h-9 w-9 rounded-full px-0"
+              className="composer-action h-9 w-9 rounded-full px-0"
             >
               <Square size={15} fill="currentColor" />
             </GlassButton>
@@ -187,7 +185,7 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
             <GlassButton
               type="button"
               variant="accent"
-              aria-label="Send message"
+              aria-label={isVietnamese ? "Gửi tin nhắn" : "Send message"}
               disabled={!canSend}
               onClick={onSubmit}
               className="h-9 w-9 rounded-full px-0"

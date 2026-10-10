@@ -1,5 +1,21 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## AI provider
+
+The chat API uses the OpenAI-compatible xKiro chat-completions endpoint. Configure
+these variables in `.env.local` before starting the app:
+
+```env
+AI_BASE_URL=https://api.xkiro.com/v1
+AI_API_KEY=your_xkiro_api_key_here
+AI_MODEL=qwen/qwen3.5-flash:free
+```
+
+Replace the API key placeholder with your xKiro API key. The server adds the
+Brimstone commander system instruction and streams the response to the chat UI. Requests
+use the OpenAI-compatible `/chat/completions` endpoint and send both
+`Authorization: Bearer <key>` and `x-api-key: <key>` authentication headers.
+
 ## Getting Started
 
 First, run the development server:

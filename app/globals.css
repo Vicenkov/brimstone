@@ -8,8 +8,15 @@
   --bg: #f5f7fa;
   --fg: #0f172a;
   --fg-muted: #5b6578;
-  --accent: #3f58f0;
+  --accent: #8b5cf6;
   --accent-fg: #ffffff;
+  --chat-font-size: 15px;
+  --app-font-family: var(--font-inter), system-ui, sans-serif;
+  --composer-bg: rgba(255, 255, 255, 0.82);
+  --composer-border: rgba(15, 23, 42, 0.12);
+  --composer-text: #0f172a;
+  --composer-placeholder: #64748b;
+  --composer-action: #475569;
 
   --glass-bg: rgba(255, 255, 255, 0.55);
   --glass-border: rgba(15, 23, 42, 0.08);
@@ -28,8 +35,13 @@
   --bg: #08090c;
   --fg: #f1f3f8;
   --fg-muted: #9aa3b5;
-  --accent: #8c9eff;
-  --accent-fg: #0b0d14;
+  --accent: #8b5cf6;
+  --accent-fg: #ffffff;
+  --composer-bg: rgba(15, 23, 42, 0.8);
+  --composer-border: rgba(255, 255, 255, 0.1);
+  --composer-text: #ffffff;
+  --composer-placeholder: #94a3b8;
+  --composer-action: #cbd5e1;
 
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
@@ -49,7 +61,7 @@
   --color-fg-muted: var(--fg-muted);
   --color-accent: var(--accent);
   --color-accent-fg: var(--accent-fg);
-  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-sans: var(--app-font-family);
 }
 
 html,
@@ -60,7 +72,8 @@ body {
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--app-font-family);
+  font-size: var(--chat-font-size);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -217,7 +230,7 @@ body::before {
 
 /* ---------- Markdown trong tin nhắn ---------- */
 .markdown {
-  font-size: 15px;
+  font-size: var(--chat-font-size);
   line-height: 1.7;
   overflow-wrap: anywhere;
 }
@@ -367,8 +380,200 @@ body::before {
 }
 /* ---------- Message Composer ---------- */
 
+@property --composer-glow-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+html {
+  --composer-glow-1: #3b82f6;
+  --composer-glow-2: #ec4899;
+  --composer-glow-3: #eab308;
+  --composer-glow-4: #10b981;
+}
+
+html[data-loading-glow="amber"] {
+  --composer-glow-1: #ff5500;
+  --composer-glow-2: #ffaa00;
+  --composer-glow-3: #e64a19;
+  --composer-glow-4: #ff5500;
+}
+
+html[data-loading-glow="purple"] {
+  --composer-glow-1: #a855f7;
+  --composer-glow-2: #6366f1;
+  --composer-glow-3: #ec4899;
+  --composer-glow-4: #a855f7;
+}
+
+html[data-loading-glow="blue"] {
+  --composer-glow-1: #0066ff;
+  --composer-glow-2: #00f2fe;
+  --composer-glow-3: #3b82f6;
+  --composer-glow-4: #0066ff;
+}
+
 .composer-textarea {
+  isolation: isolate;
+  border: 1px solid var(--composer-border);
+  background: var(--composer-bg);
+  background-clip: padding-box;
+  -webkit-backdrop-filter: blur(32px) saturate(160%);
+  backdrop-filter: blur(32px) saturate(160%);
+  box-shadow:
+    0 12px 36px rgba(15, 23, 42, 0.12),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  color: var(--composer-text);
   scrollbar-width: thin;
+  transition:
+    box-shadow 240ms ease,
+    background-color 240ms ease;
+}
+
+.composer-textarea textarea {
+  color: inherit;
+}
+
+.composer-textarea textarea::placeholder {
+  color: var(--composer-placeholder);
+}
+
+.composer-textarea .composer-action {
+  color: var(--composer-action);
+}
+
+.composer-textarea .composer-action:hover {
+  color: var(--composer-text);
+}
+
+.composer-textarea::before,
+.composer-textarea::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--composer-glow-angle),
+    transparent 0deg,
+    transparent 330deg,
+    var(--composer-glow-1) 338deg,
+    var(--composer-glow-2) 346deg,
+    var(--composer-glow-3) 353deg,
+    var(--composer-glow-4) 358deg,
+    transparent 360deg
+  );
+  transition:
+    opacity 260ms ease,
+    filter 260ms ease;
+}
+
+.composer-textarea::before {
+  padding: 1px;
+  filter: none;
+  opacity: 0;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.composer-textarea::after {
+  padding: 1px;
+  filter: blur(12px);
+  opacity: 0;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.composer-textarea:focus-within::before {
+  opacity: 0;
+}
+
+.composer-textarea:focus-within::after {
+  opacity: 0;
+}
+
+.composer-textarea.is-generating::before {
+  opacity: 0.9;
+  animation: composer-rainbow-travel 3s linear infinite;
+}
+
+.composer-textarea.is-generating::after {
+  opacity: 0.8;
+  animation: composer-rainbow-travel 3s linear infinite;
+}
+
+.composer-textarea:focus-within {
+  box-shadow:
+    0 16px 42px rgba(15, 23, 42, 0.16),
+    inset 0 1px 0 var(--glass-highlight);
+}
+
+.composer-textarea.is-generating {
+  border-color: transparent;
+}
+
+.composer-textarea.is-generating:focus-within {
+  box-shadow:
+    0 16px 42px rgba(15, 23, 42, 0.16),
+    0 0 28px rgba(96, 165, 250, 0.1),
+    inset 0 1px 0 var(--glass-highlight);
+}
+
+@keyframes composer-rainbow-travel {
+  from {
+    --composer-glow-angle: 0deg;
+  }
+  to {
+    --composer-glow-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .composer-textarea.is-generating::before,
+  .composer-textarea.is-generating::after {
+    animation: none;
+  }
+}
+
+.dark .composer-textarea:focus-within {
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.dark .composer-textarea.is-generating:focus-within {
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.38),
+    0 0 30px rgba(96, 165, 250, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+html[data-font-size="small"] {
+  font-size: 14px;
+  --chat-font-size: 13px;
+}
+html[data-font-size="medium"] {
+  font-size: 16px;
+  --chat-font-size: 15px;
+}
+html[data-font-size="large"] {
+  font-size: 18px;
+  --chat-font-size: 18px;
+}
+
+html[data-font-family="system"] {
+  --app-font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+html[data-font-family="mono"] {
+  --app-font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
 .composer-textarea::-webkit-scrollbar {
