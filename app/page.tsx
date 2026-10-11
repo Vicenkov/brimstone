@@ -20,7 +20,7 @@ export default function Home() {
     renameConversation,
     removeConversation,
   } = useConversations();
-  const { messages, status, error, send, stop, retry } = useChat(activeConversation?.id ?? null);
+  const { messages, status, error, send, editMessage, stop, retry } = useChat(activeConversation?.id ?? null);
 
   const [draft, setDraft] = useState("");
 
@@ -82,6 +82,7 @@ export default function Home() {
           status={status}
           error={error} 
           onRetry={retry}
+          onEditMessage={editMessage}
         />
       )}
     </AppShell>

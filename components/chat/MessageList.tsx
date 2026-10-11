@@ -17,9 +17,16 @@ type MessageListProps = {
   status: ChatStatus;
   error: string | null;
   onRetry: () => void;
+  onEditMessage: (messageId: string, content: string) => void;
 };
 
-export function MessageList({ messages, status, error, onRetry }: MessageListProps) {
+export function MessageList({
+  messages,
+  status,
+  error,
+  onRetry,
+  onEditMessage,
+}: MessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const followBottomRef = useRef(true);
   const lastUserMessageIdRef = useRef<string | null>(null);
@@ -80,6 +87,8 @@ export function MessageList({ messages, status, error, onRetry }: MessageListPro
               key={message.id}
               message={message}
               isStreaming={status === "streaming" && message.id === lastMessageId}
+              canEdit={status === "idle"}
+              onEdit={onEditMessage}
             />
           ))}
           {status === "waiting" && <TypingIndicator />}

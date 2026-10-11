@@ -114,19 +114,27 @@ export function getConversationMessages(id: string): Message[] {
 }
 
 export function saveConversationMessages(id: string, messages: Message[]) {
-  const firstUserMessage = messages.find((message) => message.role === "user");
   commit(
     getSnapshot().map((item) =>
       item.id === id
         ? {
             ...item,
             messages,
-            title:
-              item.title === "New chat" && firstUserMessage
-                ? firstUserMessage.content.trim().slice(0, MAX_TITLE_LENGTH) || item.title
-                : item.title,
             updatedAt: Date.now(),
           }
+        : item,
+    ),
+  );
+}
+
+export function setGeneratedConversationTitle(id: string, title: string) {
+  const trimmed = title.trim().slice(0, MAX_TITLE_LENGTH);
+  if (!trimmed) return;
+
+  commit(
+    getSnapshot().map((item) =>
+      item.id === id && item.title === "New chat"
+        ? { ...item, title: trimmed, updatedAt: Date.now() }
         : item,
     ),
   );

@@ -6,6 +6,7 @@ import type { StreamEvent } from "@/lib/ai/stream-events";
 import { addActivity } from "@/lib/db/local-settings";
 import {
   getConversationMessages,
+  setGeneratedConversationTitle,
   saveConversationMessages,
 } from "@/lib/db/local-conversations";
 import { createId } from "@/lib/utils/id";
@@ -25,6 +26,35 @@ async function readErrorMessage(response: Response): Promise<string> {
     // Không đọc được nội dung lỗi: dùng thông báo chung bên dưới
   }
   return GENERIC_ERROR;
+}
+
+function fallbackConversationTitle(content: string): string {
+  return content.trim().replace(/\s+/g, " ").split(" ").slice(0, 5).join(" ");
+}
+
+async function generateConversationTitle(
+  conversationId: string,
+  userMessage: string,
+  assistantMessage: string,
+) {
+  try {
+    const response = await fetch("/api/chat/title", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userMessage, assistantMessage }),
+    });
+
+    if (!response.ok) throw new ChatRequestError(await readErrorMessage(response));
+
+    const data = (await response.json()) as { title?: unknown };
+    if (typeof data.title !== "string" || !data.title.trim()) {
+      throw new ChatRequestError("The AI returned an invalid conversation title.");
+    }
+    setGeneratedConversationTitle(conversationId, data.title);
+  } catch (caught) {
+    console.error("[chat] Could not generate conversation title", caught);
+    setGeneratedConversationTitle(conversationId, fallbackConversationTitle(userMessage));
+  }
 }
 
 export function useChat(conversationId: string | null) {
@@ -76,6 +106,8 @@ export function useChat(conversationId: string | null) {
     const assistantCreatedAt = Date.now();
     let text = "";
     let updatedHistory = history;
+    const isFirstReply = history.filter((message) => message.role === "user").length === 1;
+    const firstUserMessage = history.find((message) => message.role === "user");
 
     const publish = () => {
       const content = text;
@@ -133,6 +165,10 @@ export function useChat(conversationId: string | null) {
         }
         if (changed) publish();
       }
+
+      if (isFirstReply && firstUserMessage && text.trim()) {
+        void generateConversationTitle(targetConversationId, firstUserMessage.content, text);
+      }
     } catch (caught) {
       // Bấm Stop không phải lỗi: giữ nguyên phần chữ đã nhận
       if (!controller.signal.aborted) {
@@ -184,6 +220,35 @@ export function useChat(conversationId: string | null) {
     [conversationId, messages, status, run],
   );
 
+  const editMessage = useCallback(
+    (messageId: string, input: string) => {
+      const content = input.trim();
+      if (!content || !conversationId || status !== "idle") return;
+
+      if (content.length > LIMITS.maxMessageChars) {
+        setErrorState({
+          conversationId,
+          error: `Your message is too long (max ${LIMITS.maxMessageChars.toLocaleString("en-US")} characters).`,
+        });
+        return;
+      }
+
+      const messageIndex = messages.findIndex(
+        (message) => message.id === messageId && message.role === "user",
+      );
+      if (messageIndex === -1 || messages[messageIndex].content === content) return;
+
+      const history = messages.slice(0, messageIndex + 1).map((message, index) =>
+        index === messageIndex ? { ...message, content } : message,
+      );
+      setMessageState({ conversationId, messages: history });
+      saveConversationMessages(conversationId, history);
+      addActivity("message", "Message edited");
+      void run(history, conversationId);
+    },
+    [conversationId, messages, status, run],
+  );
+
   // Gửi lại từ tin nhắn cuối của người dùng (bỏ phần trả lời dở dang nếu có)
   const retry = useCallback(() => {
     if (status !== "idle" || !conversationId) return;
@@ -203,5 +268,5 @@ export function useChat(conversationId: string | null) {
     void run(history, conversationId);
   }, [conversationId, messages, status, run]);
 
-  return { messages, status, error, send, stop, retry };
+  return { messages, status, error, send, editMessage, stop, retry };
 }
