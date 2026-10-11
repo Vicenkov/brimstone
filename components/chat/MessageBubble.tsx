@@ -2,7 +2,7 @@
 
 import { memo, useState } from "react";
 import { motion } from "motion/react";
-import { Check, Copy, ListPlus, Pencil } from "lucide-react";
+import { Check, Copy, Pencil } from "lucide-react";
 import { AssistantAvatar } from "@/components/chat/AssistantAvatar";
 import { MarkdownContent } from "@/components/chat/MarkdownContent";
 import { GlassButton } from "@/components/ui/GlassButton";
@@ -14,6 +14,8 @@ import type { Message } from "@/types/chat";
 type MessageBubbleProps = {
   message: Message;
   isStreaming?: boolean;
+  avatarState?: "idle" | "thinking" | "streaming";
+  animateAvatar?: boolean;
   canEdit?: boolean;
   onEdit?: (messageId: string, content: string) => void;
 };
@@ -30,6 +32,8 @@ function formatSelectedContext(text: string): string {
 function MessageBubbleBase({
   message,
   isStreaming = false,
+  avatarState = "idle",
+  animateAvatar = false,
   canEdit = false,
   onEdit,
 }: MessageBubbleProps) {
@@ -66,7 +70,9 @@ function MessageBubbleBase({
         : isVietnamese ? "Trợ lý" : "Assistant"}
       className={cn("group flex gap-3", isUser ? "justify-end" : "justify-start")}
     >
-      {!isUser && <AssistantAvatar />}
+      {!isUser && (
+        <AssistantAvatar state={avatarState} animated={animateAvatar} />
+      )}
 
       <div className={cn("min-w-0", isUser ? "max-w-[85%]" : "flex-1")}>
         {isUser ? (
@@ -83,22 +89,18 @@ function MessageBubbleBase({
                 }
               }}
               rows={Math.max(2, Math.min(8, message.content.split("\n").length))}
-              className="w-full min-w-0 resize-y rounded-[22px] rounded-br-lg border border-white/20 bg-accent px-4 py-2.5 text-[15px] leading-relaxed break-words whitespace-pre-wrap text-accent-fg outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="light-user-bubble w-full min-w-0 resize-y rounded-[22px] rounded-br-lg border border-white/20 bg-accent px-4 py-2.5 text-[15px] leading-relaxed break-words whitespace-pre-wrap text-accent-fg outline-none focus-visible:ring-2 focus-visible:ring-accent"
             />
           ) : (
             <div
               data-chat-message-content
-              className="max-w-full rounded-[22px] rounded-br-lg bg-accent px-4 py-2.5 text-[15px] leading-relaxed break-words text-accent-fg"
+              className="light-user-bubble max-w-full rounded-[22px] rounded-br-lg bg-accent px-4 py-2.5 text-[15px] leading-relaxed break-words text-accent-fg"
             >
               {message.selectedContext && (
-                <div className="mb-2 rounded-xl border border-white/20 bg-black/5 px-3 py-2">
-                  <div className="mb-1 flex items-center gap-1.5 text-xs font-medium opacity-75">
-                    <ListPlus size={14} />
-                    {isVietnamese ? "Ngữ cảnh được chọn:" : "Selected context:"}
-                  </div>
+                <div className="light-context-chip mb-2 rounded-xl border border-white/25 bg-black/10 px-3 py-1.5 text-sm text-white">
                   <p
                     title={message.selectedContext}
-                    className="line-clamp-4 whitespace-pre-wrap break-words text-sm"
+                    className="line-clamp-4 whitespace-pre-wrap break-words"
                   >
                     {formatSelectedContext(message.selectedContext)}
                   </p>

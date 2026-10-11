@@ -65,7 +65,7 @@ export function GlassModal({ open, onClose, title, children }: GlassModalProps) 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="glass relative w-full max-w-md rounded-[28px] bg-[color-mix(in_srgb,var(--bg)_94%,transparent)] p-6 shadow-2xl backdrop-blur-2xl outline-none"
+            className="glass light-glass-3 relative w-full max-w-md rounded-[28px] bg-[color-mix(in_srgb,var(--bg)_94%,transparent)] p-6 shadow-2xl backdrop-blur-2xl outline-none"
           >
             <div className="mb-4 flex items-center justify-between gap-4">
               <h2 id={titleId} className="text-lg font-semibold">

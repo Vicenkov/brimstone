@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { AnimatePresence } from "motion/react";
-import { Plus, Search, Settings, Sparkles } from "lucide-react";
+import { Plus, Search, Settings } from "lucide-react";
 import { ConversationItem } from "@/components/sidebar/ConversationItem";
 import { GlassButton } from "@/components/ui/GlassButton";
 import { GlassInput } from "@/components/ui/GlassInput";
+import { AIOrb } from "@/components/ui/AIOrb";
 import { useAppSettings } from "@/hooks/useAppSettings";
 import { normalizeForSearch } from "@/lib/utils/text";
 import type { Conversation } from "@/types/chat";
@@ -33,6 +34,7 @@ export function SidebarContent({
 }: SidebarContentProps) {
   const { settings } = useAppSettings();
   const isVietnamese = settings.language === "vi";
+  const activePillLayoutId = `active-conversation-pill-${useId()}`;
   const [query, setQuery] = useState("");
 
   const visibleConversations = useMemo(() => {
@@ -49,7 +51,7 @@ export function SidebarContent({
     <div className="flex h-full min-w-0 flex-col gap-4 overflow-x-hidden p-4">
       <div className="flex min-w-0 items-center justify-between gap-2 pl-2">
         <div className="flex min-w-0 items-center gap-2 text-lg font-semibold tracking-tight">
-          <Sparkles size={20} className="shrink-0 text-accent" />
+          <AIOrb size="sm" state="idle" />
           <span className="truncate">Brimstone</span>
         </div>
         {headerAction}
@@ -57,7 +59,7 @@ export function SidebarContent({
 
       <GlassButton
         variant="accent"
-        className="w-full min-w-0 overflow-hidden"
+        className="light-new-chat w-full min-w-0 overflow-hidden"
         onClick={onNewChat}
       >
         <Plus size={18} className="shrink-0" />
@@ -107,6 +109,7 @@ export function SidebarContent({
                   key={conversation.id}
                   conversation={conversation}
                   isActive={conversation.id === activeId}
+                  activePillLayoutId={activePillLayoutId}
                   onSelect={onSelect}
                   onRename={onRename}
                   onRequestDelete={onRequestDelete}
@@ -119,7 +122,7 @@ export function SidebarContent({
 
       <GlassButton
         variant="ghost"
-        className="w-full min-w-0 justify-start overflow-hidden"
+        className="light-settings-button w-full min-w-0 justify-start overflow-hidden"
         onClick={onOpenSettings}
         aria-label={isVietnamese ? "Mở cài đặt" : "Open settings"}
       >

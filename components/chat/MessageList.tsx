@@ -49,6 +49,11 @@ export function MessageList({
     if (!element) return;
     const distanceFromBottom =
       element.scrollHeight - element.scrollTop - element.clientHeight;
+    const header = document.querySelector<HTMLElement>(".chat-header");
+    header?.style.setProperty(
+      "--header-glass-alpha",
+      `${0.16 + Math.min(element.scrollTop / 80, 1) * 0.3}`,
+    );
     const isNearBottom = distanceFromBottom < NEAR_BOTTOM_PX;
     followBottomRef.current = isNearBottom;
     setShowScrollButton(!isNearBottom);
@@ -76,11 +81,19 @@ export function MessageList({
   };
 
   const lastMessageId = messages[messages.length - 1]?.id;
+  let latestAssistantMessageId: string | null = null;
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    if (messages[index].role === "assistant") {
+      latestAssistantMessageId = messages[index].id;
+      break;
+    }
+  }
 
   return (
     <div className="relative h-full">
       <div
         ref={scrollRef}
+        data-chat-scroll
         onScroll={handleScroll}
         role="log"
         aria-label={isVietnamese ? "Cuộc trò chuyện" : "Conversation"}
@@ -93,6 +106,14 @@ export function MessageList({
               key={message.id}
               message={message}
               isStreaming={status === "streaming" && message.id === lastMessageId}
+              avatarState={
+                status === "streaming"
+                  ? "streaming"
+                  : status === "waiting"
+                    ? "thinking"
+                    : "idle"
+              }
+              animateAvatar={message.id === latestAssistantMessageId}
               canEdit={status === "idle"}
               onEdit={onEditMessage}
             />

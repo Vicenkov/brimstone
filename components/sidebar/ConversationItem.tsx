@@ -11,6 +11,7 @@ import { useAppSettings } from "@/hooks/useAppSettings";
 type ConversationItemProps = {
   conversation: Conversation;
   isActive: boolean;
+  activePillLayoutId: string;
   onSelect: (id: string) => void;
   onRename: (id: string, title: string) => void;
   onRequestDelete: (id: string) => void;
@@ -19,6 +20,7 @@ type ConversationItemProps = {
 export function ConversationItem({
   conversation,
   isActive,
+  activePillLayoutId,
   onSelect,
   onRename,
   onRequestDelete,
@@ -77,15 +79,23 @@ export function ConversationItem({
         />
       ) : (
         <>
+          {isActive && (
+            <motion.span
+              layoutId={activePillLayoutId}
+              transition={{ type: "spring", stiffness: 340, damping: 30 }}
+              className="conversation-active-pill"
+              aria-hidden="true"
+            />
+          )}
           <button
             type="button"
             onClick={() => onSelect(conversation.id)}
             aria-current={isActive ? "true" : undefined}
             className={cn(
-              "flex h-10 w-full min-w-0 items-center overflow-hidden rounded-[14px] px-3 pr-[76px] text-left text-sm transition-colors",
+              "relative z-10 flex h-10 w-full min-w-0 items-center overflow-hidden rounded-[14px] px-3 pr-[76px] text-left text-sm transition-colors",
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent",
               isActive
-                ? "bg-[var(--glass-highlight)] font-medium text-fg"
+                ? "font-medium text-fg"
                 : "text-fg-muted hover:bg-[var(--glass-bg)] hover:text-fg",
             )}
           >

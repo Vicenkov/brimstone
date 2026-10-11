@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "katex/dist/katex.min.css";
 import "./globals.css";
+import { AnimatedBackground } from "@/components/layout/AnimatedBackground";
+import { MotionProvider } from "@/components/layout/MotionProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,7 +28,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="vi" className={inter.variable} suppressHydrationWarning>
-      <body>{children}</body>
+      <body className="relative isolate min-h-dvh">
+        <MotionProvider>
+          <AnimatedBackground />
+          <div className="relative z-10 min-h-dvh">{children}</div>
+        </MotionProvider>
+      </body>
     </html>
   );
 }

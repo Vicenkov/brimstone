@@ -1,5 +1,6 @@
-import { Menu, PanelLeft, Sparkles } from "lucide-react";
+import { Menu, PanelLeft } from "lucide-react";
 import { GlassButton } from "@/components/ui/GlassButton";
+import { AIOrb } from "@/components/ui/AIOrb";
 import { useAppSettings } from "@/hooks/useAppSettings";
 
 type ChatHeaderProps = {
@@ -17,8 +18,11 @@ export function ChatHeader({
 }: ChatHeaderProps) {
   const { settings } = useAppSettings();
   const isVietnamese = settings.language === "vi";
+
   return (
-    <header className="border-b border-[var(--glass-border)] pt-[env(safe-area-inset-top)]">
+    <header
+      className="chat-header pt-[env(safe-area-inset-top)]"
+    >
       <div className="flex h-14 items-center gap-2 px-3 sm:px-4">
         {/* Điện thoại và tablet: mở drawer */}
         <GlassButton
@@ -50,8 +54,8 @@ export function ChatHeader({
         </h1>
 
         {/* Tên model đang để tạm, Phase 7 và 11 sẽ lấy từ cấu hình thật */}
-        <div className="inline-flex h-8 items-center gap-1.5 rounded-full border border-purple-300/50 bg-purple-100/80 px-3 text-xs text-purple-700 shadow-[0_0_12px_rgba(147,51,234,0.2)] transition-all duration-300 hover:shadow-[0_0_18px_rgba(147,51,234,0.35)] dark:border-purple-500/30 dark:bg-purple-950/20 dark:text-purple-300 dark:shadow-[0_0_15px_rgba(147,51,234,0.25)] dark:hover:shadow-[0_0_22px_rgba(147,51,234,0.45)]">
-          <Sparkles size={14} className="text-purple-700 dark:text-purple-300" />
+        <div className="ai-assistant-pill inline-flex h-8 items-center gap-1.5 rounded-full border border-purple-300/50 bg-purple-100/80 px-3 text-xs text-purple-700 shadow-[0_0_12px_rgba(147,51,234,0.2)] transition-all duration-300 hover:shadow-[0_0_18px_rgba(147,51,234,0.35)] dark:border-purple-500/30 dark:bg-purple-950/20 dark:text-purple-300 dark:shadow-[0_0_15px_rgba(147,51,234,0.25)] dark:hover:shadow-[0_0_22px_rgba(147,51,234,0.45)]">
+          <AIOrb size="sm" state="idle" />
           {isVietnamese ? "Trợ lý AI" : "AI Assistant"}
         </div>
       </div>

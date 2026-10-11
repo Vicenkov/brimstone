@@ -137,9 +137,14 @@ export function TextSelectionListener({
     Math.max((selection.left + selection.right) / 2 - width / 2, VIEWPORT_GAP),
     window.innerWidth - width - VIEWPORT_GAP,
   );
+  const isMobile = window.matchMedia("(max-width: 767px)").matches;
   const spaceAbove = selection.top;
-  const top =
-    spaceAbove >= TOOLBAR_HEIGHT + VIEWPORT_GAP
+  const top = isMobile
+    ? Math.min(
+        selection.bottom + VIEWPORT_GAP,
+        window.innerHeight - TOOLBAR_HEIGHT - VIEWPORT_GAP,
+      )
+    : spaceAbove >= TOOLBAR_HEIGHT + VIEWPORT_GAP
       ? selection.top - TOOLBAR_HEIGHT - VIEWPORT_GAP
       : Math.min(
           selection.bottom + VIEWPORT_GAP,
@@ -156,7 +161,7 @@ export function TextSelectionListener({
   return (
     <div
       ref={toolbarRef}
-      className="fixed z-[100] rounded-full border border-white/15 bg-[var(--glass-bg)] p-1 text-fg shadow-xl backdrop-blur-xl"
+      className="fixed z-[9999] rounded-full border border-white/15 bg-[var(--glass-bg)] p-1 text-fg shadow-xl backdrop-blur-xl"
       style={{ top: Math.max(VIEWPORT_GAP, top), left, width }}
       onPointerDown={(event) => event.preventDefault()}
     >

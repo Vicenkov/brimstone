@@ -128,7 +128,7 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
         )}
       >
         {selectedContext && (
-          <div className="mb-2 flex min-w-0 items-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-3 py-2 text-sm text-fg">
+          <div className="light-composer-context mb-2 flex min-w-0 items-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-3 py-2 text-sm text-fg">
             <ListPlus size={16} className="shrink-0 text-accent" />
             <div className="min-w-0 flex-1">
               <div className="truncate" title={selectedContext}>
@@ -212,7 +212,7 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
               aria-label={isVietnamese ? "Gửi tin nhắn" : "Send message"}
               disabled={!canSend}
               onClick={onSubmit}
-              className="h-9 w-9 rounded-full px-0"
+              className="light-send-button h-9 w-9 rounded-full px-0"
             >
               <ArrowUp size={18} />
             </GlassButton>

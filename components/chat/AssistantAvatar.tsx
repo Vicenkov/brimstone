@@ -1,12 +1,19 @@
-import { Sparkles } from "lucide-react";
+"use client";
 
-export function AssistantAvatar() {
+import { AIOrb } from "@/components/ui/AIOrb";
+
+type AssistantAvatarProps = {
+  state?: "idle" | "thinking" | "streaming";
+  animated?: boolean;
+};
+
+export function AssistantAvatar({
+  state = "idle",
+  animated = true,
+}: AssistantAvatarProps) {
   return (
-    <div
-      aria-hidden="true"
-      className="glass mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
-    >
-      <Sparkles size={16} className="text-accent" />
-    </div>
+    <span className="mt-0.5 block h-9 w-9 shrink-0">
+      <AIOrb size="md" state={state} animated={animated} />
+    </span>
   );
 }

@@ -21,6 +21,32 @@ type SettingsDialogProps = {
   onClose: () => void;
 };
 
+type DocumentWithViewTransition = Document & {
+  startViewTransition?: (update: () => void) => { finished: Promise<void> };
+};
+
+function transitionTheme(event: React.MouseEvent<HTMLButtonElement>, applyTheme: () => void) {
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const transitionDocument = document as DocumentWithViewTransition;
+
+  if (!reducedMotion && transitionDocument.startViewTransition) {
+    root.style.setProperty("--theme-reveal-x", `${event.clientX}px`);
+    root.style.setProperty("--theme-reveal-y", `${event.clientY}px`);
+    transitionDocument.startViewTransition.call(document, applyTheme);
+    return;
+  }
+
+  root.classList.add("theme-fade");
+  const fadeDuration = reducedMotion ? 150 : 300;
+  const applyAfterFrame = () => {
+    applyTheme();
+    window.setTimeout(() => root.classList.remove("theme-fade"), fadeDuration);
+  };
+  if (reducedMotion) applyAfterFrame();
+  else requestAnimationFrame(applyAfterFrame);
+}
+
 export function SettingsDialog({ open, onClose }: SettingsDialogProps) {
   const { settings, updateSettings } = useAppSettings();
   const { conversations } = useConversations();
@@ -179,7 +205,10 @@ export function SettingsDialog({ open, onClose }: SettingsDialogProps) {
                   key={option.value}
                   variant={settings.theme === option.value ? "accent" : "ghost"}
                   aria-pressed={settings.theme === option.value}
-                  onClick={() => updateSettings({ theme: option.value })}
+                  onClick={(event) => {
+                    if (settings.theme === option.value) return;
+                    transitionTheme(event, () => updateSettings({ theme: option.value }));
+                  }}
                   className="h-9 flex-1 px-2 text-xs"
                 >
                   {option.label}
@@ -357,7 +386,7 @@ export function SettingsDialog({ open, onClose }: SettingsDialogProps) {
         </div>
 
         <div className="flex justify-end">
-          <GlassButton onClick={onClose} className="h-9 px-3 text-xs">{labels.close}</GlassButton>
+          <GlassButton onClick={onClose} className="light-settings-button h-9 px-3 text-xs">{labels.close}</GlassButton>
         </div>
       </div>
     </GlassModal>
