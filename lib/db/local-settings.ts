@@ -25,7 +25,7 @@ export type AppSettings = {
 
 const STORAGE_KEY = "chatbot.settings.v1";
 const DEFAULT_SETTINGS: AppSettings = {
-  language: "en",
+  language: "vi",
   theme: "light",
   fontSize: "medium",
   fontFamily: "system",

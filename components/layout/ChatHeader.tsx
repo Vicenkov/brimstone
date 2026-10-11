@@ -23,7 +23,7 @@ export function ChatHeader({
         {/* Điện thoại và tablet: mở drawer */}
         <GlassButton
           variant="ghost"
-          aria-label={isVietnamese ? "Mở danh sách trò chuyện" : "Open sidebar"}
+          aria-label={isVietnamese ? "Mở danh sách trò chuyện" : "Open conversations"}
           onClick={onOpenDrawer}
           className="w-11 px-0 lg:hidden"
         >
@@ -44,7 +44,9 @@ export function ChatHeader({
         </GlassButton>
 
         <h1 className="min-w-0 flex-1 truncate text-sm font-medium">
-          {title === "New chat" && isVietnamese ? "Cuộc trò chuyện mới" : title}
+          {title === "New chat"
+            ? isVietnamese ? "Cuộc trò chuyện mới" : "New chat"
+            : title}
         </h1>
 
         {/* Tên model đang để tạm, Phase 7 và 11 sẽ lấy từ cấu hình thật */}

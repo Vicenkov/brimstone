@@ -11,7 +11,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Brimstone",
-  description: "Brimstone AI chat assistant.",
+  description: "Trợ lý trò chuyện AI Brimstone.",
 };
 
 export const viewport: Viewport = {
@@ -25,7 +25,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="vi" className={inter.variable} suppressHydrationWarning>
       <body>{children}</body>
     </html>
   );

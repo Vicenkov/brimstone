@@ -2,12 +2,14 @@
 
 import { motion } from "motion/react";
 import { AssistantAvatar } from "@/components/chat/AssistantAvatar";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 export function TypingIndicator() {
+  const { settings } = useAppSettings();
   return (
     <motion.div
       role="status"
-      aria-label="Assistant is typing"
+      aria-label={settings.language === "vi" ? "Trợ lý đang trả lời" : "Assistant is typing"}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.25, ease: "easeOut" }}

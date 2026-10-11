@@ -8,14 +8,16 @@ import {
 } from "react";
 import {
   ArrowUp,
+  ListPlus,
   Mic,
   Plus,
+  X,
   Square,
 } from "lucide-react";
 import { GlassButton } from "@/components/ui/GlassButton";
 import { cn } from "@/lib/utils/cn";
-import { useAppSettings } from "@/hooks/useAppSettings";
 import type { ChatStatus } from "@/types/chat";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 export type ComposerHandle = {
   focus: () => void;
@@ -29,6 +31,8 @@ type ComposerProps = {
   onStop?: () => void;
   status: ChatStatus;
   disabled?: boolean;
+  selectedContext?: string | null;
+  onRemoveSelectedContext?: () => void;
 };
 
 export const Composer = forwardRef<ComposerHandle, ComposerProps>(
@@ -40,13 +44,14 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
       onStop,
       status,
       disabled = false,
+      selectedContext = null,
+      onRemoveSelectedContext,
     },
     ref,
   ) {
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { settings } = useAppSettings();
     const isVietnamese = settings.language === "vi";
-
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const isBusy = status !== "idle";
     const canSend = value.trim().length > 0 && !isBusy && !disabled;
 
@@ -122,6 +127,25 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
           isBusy && "is-generating",
         )}
       >
+        {selectedContext && (
+          <div className="mb-2 flex min-w-0 items-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-3 py-2 text-sm text-fg">
+            <ListPlus size={16} className="shrink-0 text-accent" />
+            <div className="min-w-0 flex-1">
+              <div className="truncate" title={selectedContext}>
+                {selectedContext.replace(/\s+/g, " ").trim()}
+              </div>
+            </div>
+            <button
+              type="button"
+              aria-label={isVietnamese ? "Xóa ngữ cảnh đã chọn" : "Remove selected context"}
+              title={isVietnamese ? "Xóa ngữ cảnh" : "Remove context"}
+              onClick={onRemoveSelectedContext}
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-fg-muted transition-colors hover:bg-accent/15 hover:text-fg focus-visible:outline-2 focus-visible:outline-accent"
+            >
+              <X size={15} />
+            </button>
+          </div>
+        )}
         <textarea
           ref={textareaRef}
           value={value}
@@ -130,7 +154,7 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
           onInput={resizeTextarea}
           disabled={disabled}
           rows={1}
-          placeholder={isVietnamese ? "Nhắn tin cho AI..." : "Message AI..."}
+          placeholder={isVietnamese ? "Hỏi bất cứ điều gì..." : "Ask anything..."}
           aria-label={isVietnamese ? "Tin nhắn" : "Message"}
           className={cn(
             "block w-full resize-none bg-transparent",
@@ -175,7 +199,7 @@ export const Composer = forwardRef<ComposerHandle, ComposerProps>(
             <GlassButton
               type="button"
               variant="ghost"
-              aria-label={isVietnamese ? "Dừng tạo câu trả lời" : "Stop generating"}
+              aria-label={isVietnamese ? "Dừng tạo câu trả lời" : "Stop response"}
               onClick={onStop}
               className="composer-action h-9 w-9 rounded-full px-0"
             >

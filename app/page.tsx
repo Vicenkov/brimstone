@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { EmptyState } from "@/components/chat/EmptyState";
 import { MessageList } from "@/components/chat/MessageList";
@@ -23,6 +23,7 @@ export default function Home() {
   const { messages, status, error, send, editMessage, stop, retry } = useChat(activeConversation?.id ?? null);
 
   const [draft, setDraft] = useState("");
+  const [selectedContext, setSelectedContext] = useState<string | null>(null);
 
   const composerRef =
     useRef<ComposerHandle>(null);
@@ -35,8 +36,9 @@ export default function Home() {
     }
 
     const targetConversationId = activeConversation?.id ?? startNewChat().id;
-    send(content, targetConversationId);
+    send(content, targetConversationId, selectedContext ?? undefined);
     setDraft("");
+    setSelectedContext(null);
 
     requestAnimationFrame(() => {
       composerRef.current?.focus();
@@ -51,6 +53,12 @@ export default function Home() {
     });
   };
 
+  const handleSelectText = useCallback((selectedText: string) => {
+    if (status !== "idle" || !selectedText.trim()) return;
+    setSelectedContext(selectedText.trim());
+    requestAnimationFrame(() => composerRef.current?.focus());
+  }, [status]);
+
   const composer = (
     <Composer
       ref={composerRef}
@@ -59,6 +67,8 @@ export default function Home() {
       onSubmit={submit}
       onStop={stop}
       status={status}
+      selectedContext={selectedContext}
+      onRemoveSelectedContext={() => setSelectedContext(null)}
     />
   );
 
@@ -83,6 +93,7 @@ export default function Home() {
           error={error} 
           onRetry={retry}
           onEditMessage={editMessage}
+          onSelectText={handleSelectText}
         />
       )}
     </AppShell>

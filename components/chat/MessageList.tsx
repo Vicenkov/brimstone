@@ -5,9 +5,11 @@ import { AnimatePresence, motion } from "motion/react";
 import { ArrowDown } from "lucide-react";
 import { ErrorNotice } from "@/components/chat/ErrorNotice";
 import { MessageBubble } from "@/components/chat/MessageBubble";
+import { TextSelectionListener } from "@/components/chat/TextSelectionListener";
 import { TypingIndicator } from "@/components/chat/TypingIndicator";
 import { GlassButton } from "@/components/ui/GlassButton";
 import type { ChatStatus, Message } from "@/types/chat";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 // Cách đáy dưới mức này thì coi như "đang ở đáy"
 const NEAR_BOTTOM_PX = 80;
@@ -18,6 +20,7 @@ type MessageListProps = {
   error: string | null;
   onRetry: () => void;
   onEditMessage: (messageId: string, content: string) => void;
+  onSelectText: (text: string) => void;
 };
 
 export function MessageList({
@@ -26,7 +29,10 @@ export function MessageList({
   error,
   onRetry,
   onEditMessage,
+  onSelectText,
 }: MessageListProps) {
+  const { settings } = useAppSettings();
+  const isVietnamese = settings.language === "vi";
   const scrollRef = useRef<HTMLDivElement>(null);
   const followBottomRef = useRef(true);
   const lastUserMessageIdRef = useRef<string | null>(null);
@@ -77,7 +83,7 @@ export function MessageList({
         ref={scrollRef}
         onScroll={handleScroll}
         role="log"
-        aria-label="Conversation"
+        aria-label={isVietnamese ? "Cuộc trò chuyện" : "Conversation"}
         aria-live="off"
         className="h-full overflow-y-auto overscroll-contain"
       >
@@ -107,7 +113,7 @@ export function MessageList({
               className="pointer-events-auto"
             >
               <GlassButton
-                aria-label="Scroll to bottom"
+                aria-label={isVietnamese ? "Cuộn xuống cuối" : "Scroll to bottom"}
                 onClick={handleScrollButtonClick}
                 className="h-10 w-10 rounded-full px-0"
               >
@@ -117,6 +123,7 @@ export function MessageList({
           )}
         </AnimatePresence>
       </div>
+      <TextSelectionListener onSelectText={onSelectText} />
     </div>
   );
 }

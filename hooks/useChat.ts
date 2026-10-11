@@ -134,7 +134,11 @@ export function useChat(conversationId: string | null) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: history.map(({ role, content }) => ({ role, content })),
+          messages: history.map(({ role, content, selectedContext }) => ({
+            role,
+            content,
+            ...(selectedContext ? { selectedContext } : {}),
+          })),
         }),
         signal: controller.signal,
       });
@@ -192,7 +196,11 @@ export function useChat(conversationId: string | null) {
   }, []);
 
   const send = useCallback(
-    (input: string, targetConversationId = conversationId) => {
+    (
+      input: string,
+      targetConversationId = conversationId,
+      selectedContext?: string,
+    ) => {
       const content = input.trim();
       if (!content || !targetConversationId || status !== "idle") return;
 
@@ -209,6 +217,7 @@ export function useChat(conversationId: string | null) {
         conversationId: targetConversationId,
         role: "user",
         content,
+        ...(selectedContext?.trim() ? { selectedContext: selectedContext.trim() } : {}),
         createdAt: Date.now(),
       };
       const history = [...messages, userMessage];

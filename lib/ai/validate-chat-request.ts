@@ -3,6 +3,7 @@ import type { ChatMessage } from "@/lib/ai/types";
 export const LIMITS = {
   maxMessages: 50,
   maxMessageChars: 8_000,
+  maxSelectedContextChars: 16_000,
   maxTotalChars: 32_000,
 } as const;
 
@@ -34,7 +35,7 @@ export function validateChatRequest(body: unknown): ValidationResult {
     if (typeof item !== "object" || item === null) {
       return fail("Each message must be an object.");
     }
-    const { role, content } = item as Record<string, unknown>;
+    const { role, content, selectedContext } = item as Record<string, unknown>;
 
     // Client chỉ được gửi user/assistant. Vai "system" luôn do server đặt.
     if (role !== "user" && role !== "assistant") {
@@ -47,8 +48,23 @@ export function validateChatRequest(body: unknown): ValidationResult {
       return fail("A message is too long. Please shorten it.");
     }
 
-    totalChars += content.length;
-    messages.push({ role, content });
+    if (
+      selectedContext !== undefined &&
+      (role !== "user" ||
+        typeof selectedContext !== "string" ||
+        !selectedContext.trim() ||
+        selectedContext.length > LIMITS.maxSelectedContextChars)
+    ) {
+      return fail("Selected context is invalid or too long.");
+    }
+
+    totalChars += content.length + (typeof selectedContext === "string" ? selectedContext.length : 0);
+    messages.push({
+      role,
+      content: typeof selectedContext === "string"
+        ? `Ngữ cảnh được chọn:\n${selectedContext}\n\nCâu hỏi:\n${content}`
+        : content,
+    });
   }
 
   if (totalChars > LIMITS.maxTotalChars) {

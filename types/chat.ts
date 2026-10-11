@@ -13,6 +13,7 @@ export type Message = {
   conversationId: string;
   role: MessageRole;
   content: string;
+  selectedContext?: string;
   createdAt: number;
 };
 

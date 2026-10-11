@@ -19,6 +19,33 @@ type Suggestion = {
 
 const SUGGESTIONS: Suggestion[] = [
   {
+    title: "Giải thích khái niệm",
+    hint: "Phân tích chủ đề một cách đơn giản",
+    prompt: "Giải thích cách Internet hoạt động bằng ngôn ngữ đơn giản.",
+    icon: Lightbulb,
+  },
+  {
+    title: "Soạn thảo văn bản",
+    hint: "Email, bài luận, phụ đề",
+    prompt: "Viết email lịch sự xin giáo viên gia hạn thời hạn nộp bài.",
+    icon: PenLine,
+  },
+  {
+    title: "Giải quyết vấn đề",
+    hint: "Xử lý từng bước một",
+    prompt: "Giúp tôi giải quyết vấn đề này từng bước: ",
+    icon: Puzzle,
+  },
+  {
+    title: "Phân tích tệp tin",
+    hint: "Tóm tắt hoặc kiểm tra văn bản",
+    prompt: "Tóm tắt các ý chính của văn bản sau: ",
+    icon: FileSearch,
+  },
+];
+
+const ENGLISH_SUGGESTIONS: Suggestion[] = [
+  {
     title: "Explain something",
     hint: "Break down a topic simply",
     prompt: "Explain how the internet works in simple terms.",
@@ -51,14 +78,7 @@ type EmptyStateProps = {
 export function EmptyState({ onSelectPrompt }: EmptyStateProps) {
   const { settings } = useAppSettings();
   const isVietnamese = settings.language === "vi";
-  const suggestions = isVietnamese
-    ? [
-        { title: "Giải thích một chủ đề", hint: "Diễn giải đơn giản, dễ hiểu", prompt: "Giải thích cách Internet hoạt động bằng ngôn ngữ đơn giản.", icon: Lightbulb },
-        { title: "Soạn nội dung", hint: "Email, bài luận, chú thích", prompt: "Viết email lịch sự xin giáo viên gia hạn thời hạn nộp bài.", icon: PenLine },
-        { title: "Giải quyết vấn đề", hint: "Phân tích từng bước", prompt: "Giúp tôi giải quyết vấn đề này từng bước: ", icon: Puzzle },
-        { title: "Phân tích văn bản", hint: "Tóm tắt hoặc nhận xét nội dung", prompt: "Tóm tắt các ý chính của văn bản sau: ", icon: FileSearch },
-      ]
-    : SUGGESTIONS;
+  const suggestions = isVietnamese ? SUGGESTIONS : ENGLISH_SUGGESTIONS;
   return (
     <div className="flex h-full flex-col overflow-y-auto p-4 sm:p-6">
       <motion.div
@@ -69,12 +89,12 @@ export function EmptyState({ onSelectPrompt }: EmptyStateProps) {
       >
         <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
           {isVietnamese
-            ? "Brimstone đây. Có việc gì cần triển khai, đồng chí cứ nói."
+            ? "Brimstone đây. Hãy nêu mục tiêu, chúng ta sẽ bắt đầu ngay."
             : "Brimstone here. State the objective, and we'll get moving."}
         </h2>
         <p className="mt-2 text-fg-muted">
           {isVietnamese
-            ? "Báo cáo tình hình hoặc mục tiêu. Tôi sẽ đưa ra phương án rõ ràng, chính xác."
+            ? "Báo cáo tình huống hoặc mục tiêu. Tôi sẽ đưa ra kế hoạch rõ ràng, chính xác."
             : "Report the situation or objective. I'll provide a clear, precise plan."}
         </p>
 

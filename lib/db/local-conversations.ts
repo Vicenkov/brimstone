@@ -17,6 +17,7 @@ function isMessage(value: unknown): value is Message {
     typeof item.conversationId === "string" &&
     (item.role === "user" || item.role === "assistant") &&
     typeof item.content === "string" &&
+    (item.selectedContext === undefined || typeof item.selectedContext === "string") &&
     typeof item.createdAt === "number"
   );
 }

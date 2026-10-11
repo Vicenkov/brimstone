@@ -10,8 +10,8 @@ import { SidebarContent } from "@/components/sidebar/SidebarContent";
 import { GlassButton } from "@/components/ui/GlassButton";
 import { GlassModal } from "@/components/ui/GlassModal";
 import { GlassPanel } from "@/components/ui/GlassPanel";
-import type { Conversation } from "@/types/chat";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import type { Conversation } from "@/types/chat";
 
 const SIDEBAR_WIDTH = 288;
 const SIDEBAR_GAP = 16;
@@ -151,7 +151,7 @@ export function AppShell({
           headerAction={
             <GlassButton
               variant="ghost"
-              aria-label="Close sidebar"
+              aria-label={isVietnamese ? "Đóng thanh bên" : "Close sidebar"}
               onClick={closeDrawer}
               className="h-9 w-9 px-0"
             >

@@ -25,13 +25,17 @@ export function ConversationItem({
 }: ConversationItemProps) {
   const { settings } = useAppSettings();
   const isVietnamese = settings.language === "vi";
+  const displayTitle =
+    conversation.title === "New chat"
+      ? isVietnamese ? "Cuộc trò chuyện mới" : "New chat"
+      : conversation.title;
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState("");
   // Ref để Enter/Escape và sự kiện blur không xử lý hai lần
   const isEditingRef = useRef(false);
 
   const startEditing = () => {
-    setDraft(conversation.title);
+    setDraft(displayTitle);
     isEditingRef.current = true;
     setIsEditing(true);
   };
@@ -85,13 +89,13 @@ export function ConversationItem({
                 : "text-fg-muted hover:bg-[var(--glass-bg)] hover:text-fg",
             )}
           >
-            <span className="min-w-0 flex-1 truncate">{conversation.title}</span>
+            <span className="min-w-0 flex-1 truncate">{displayTitle}</span>
           </button>
 
           <div className="reveal-on-hover absolute inset-y-0 right-1 flex items-center">
             <GlassButton
               variant="ghost"
-              aria-label={isVietnamese ? `Đổi tên ${conversation.title}` : `Rename ${conversation.title}`}
+              aria-label={isVietnamese ? `Đổi tên ${displayTitle}` : `Rename ${displayTitle}`}
               onClick={startEditing}
               className="h-9 w-9 rounded-[10px] px-0"
             >
@@ -99,7 +103,7 @@ export function ConversationItem({
             </GlassButton>
             <GlassButton
               variant="ghost"
-              aria-label={isVietnamese ? `Xóa ${conversation.title}` : `Delete ${conversation.title}`}
+              aria-label={isVietnamese ? `Xóa ${displayTitle}` : `Delete ${displayTitle}`}
               onClick={() => onRequestDelete(conversation.id)}
               className="h-9 w-9 rounded-[10px] px-0"
             >

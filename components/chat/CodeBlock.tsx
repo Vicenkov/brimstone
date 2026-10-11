@@ -4,6 +4,7 @@ import { isValidElement, type ReactNode } from "react";
 import { Check, Copy } from "lucide-react";
 import { GlassButton } from "@/components/ui/GlassButton";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 // Sau khi tô màu, code là một cây phần tử lồng nhau. Hàm này gom lại thành chữ thuần để copy.
 function extractText(node: ReactNode): string {
@@ -30,6 +31,8 @@ type CodeBlockProps = {
 
 export function CodeBlock({ children }: CodeBlockProps) {
   const { copied, copy } = useCopyToClipboard();
+  const { settings } = useAppSettings();
+  const isVietnamese = settings.language === "vi";
   const language = extractLanguage(children);
 
   const handleCopy = () => {
@@ -42,12 +45,16 @@ export function CodeBlock({ children }: CodeBlockProps) {
         <span className="font-mono tracking-wide uppercase">{language}</span>
         <GlassButton
           variant="ghost"
-          aria-label={copied ? "Code copied" : "Copy code"}
+          aria-label={copied
+            ? isVietnamese ? "Đã sao chép mã" : "Code copied"
+            : isVietnamese ? "Sao chép mã" : "Copy code"}
           onClick={handleCopy}
           className="h-8 gap-1.5 rounded-[10px] px-2.5 text-xs"
         >
           {copied ? <Check size={14} /> : <Copy size={14} />}
-          {copied ? "Copied" : "Copy"}
+          {copied
+            ? isVietnamese ? "Đã sao chép" : "Copied"
+            : isVietnamese ? "Sao chép" : "Copy"}
         </GlassButton>
       </div>
       <pre className="overflow-x-auto p-4 font-mono text-[13px] leading-relaxed">

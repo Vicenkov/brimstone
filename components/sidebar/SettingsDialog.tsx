@@ -28,86 +28,79 @@ export function SettingsDialog({ open, onClose }: SettingsDialogProps) {
   const [selectedActivityIds, setSelectedActivityIds] = useState<string[]>([]);
   const [selectedConversationIds, setSelectedConversationIds] = useState<string[]>([]);
   const isVietnamese = settings.language === "vi";
-
-  const labels = isVietnamese
-    ? {
-        title: "Cài đặt",
-        appearance: "Giao diện",
-        theme: "Chủ đề",
-        light: "Sáng",
-        dark: "Tối",
-        fontSize: "Cỡ chữ",
-        small: "Nhỏ",
-        medium: "Vừa",
-        large: "Lớn",
-        loadingGlow: "Hiệu ứng vệt sáng loading",
-        rainbowGlow: "Đa sắc",
-        amberGlow: "Cam chiến thuật",
-        purpleGlow: "Tím neon",
-        blueGlow: "Xanh điện",
-        fontStyle: "Kiểu chữ",
-        systemFont: "Loại 1",
-        customFont: "Loại 2",
-        language: "Ngôn ngữ",
-        english: "English",
-        vietnamese: "Tiếng Việt",
-        activity: "Hoạt động gần đây",
-        empty: "Chưa có hoạt động.",
-        created: "Đã tạo cuộc trò chuyện",
-        renamed: "Đã đổi tên cuộc trò chuyện",
-        deleted: "Đã xóa cuộc trò chuyện",
-        message: "Đã gửi tin nhắn",
-        clearAll: "Xóa tất cả",
-        chatHistory: "Lịch sử trò chuyện",
-        noChats: "Chưa có cuộc trò chuyện.",
-        deleteSelected: "Xóa các mục đã chọn",
-        selectActivity: (label: string) => `Chọn hoạt động: ${label}`,
-        selectConversation: (label: string) => `Chọn cuộc trò chuyện: ${label}`,
-        confirmTitle: "Xóa lịch sử và nhật ký?",
-        confirmMessage: "Tất cả cuộc trò chuyện, tin nhắn và nhật ký hoạt động đã lưu trên thiết bị này sẽ bị xóa vĩnh viễn.",
-        cancel: "Hủy",
-        confirm: "Xóa tất cả",
-        close: "Đóng cài đặt",
-      }
-    : {
-        title: "Settings",
-        appearance: "Appearance",
-        theme: "Theme",
-        light: "Light",
-        dark: "Dark",
-        fontSize: "Font size",
-        small: "Small",
-        medium: "Medium",
-        large: "Large",
-        loadingGlow: "Border glow style",
-        rainbowGlow: "Multi-color / Rainbow",
-        amberGlow: "Brimstone Amber",
-        purpleGlow: "Cyber Purple",
-        blueGlow: "Electric Blue",
-        fontStyle: "Font style",
-        systemFont: "Type 1",
-        customFont: "Type 2",
-        language: "Language",
-        english: "English",
-        vietnamese: "Tiếng Việt",
-        activity: "Recent activity",
-        empty: "No recent activity.",
-        created: "Conversation created",
-        renamed: "Conversation renamed",
-        deleted: "Conversation deleted",
-        message: "Message sent",
-        clearAll: "Clear All",
-        chatHistory: "Chat history",
-        noChats: "No saved conversations.",
-        deleteSelected: "Delete Selected",
-        selectActivity: (label: string) => `Select activity: ${label}`,
-        selectConversation: (label: string) => `Select conversation: ${label}`,
-        confirmTitle: "Clear history and activity logs?",
-        confirmMessage: "All conversations, messages, and activity logs saved on this device will be permanently deleted.",
-        cancel: "Cancel",
-        confirm: "Clear all",
-        close: "Close settings",
-      };
+  const labels = isVietnamese ? {
+    title: "Cài đặt",
+    appearance: "Giao diện",
+    theme: "Chủ đề",
+    light: "Sáng",
+    dark: "Tối",
+    fontSize: "Cỡ chữ",
+    small: "Nhỏ",
+    medium: "Vừa",
+    large: "Lớn",
+    loadingGlow: "Hiệu ứng vệt sáng khi tải",
+    rainbowGlow: "Đa sắc",
+    amberGlow: "Cam chiến thuật",
+    purpleGlow: "Tím neon",
+    blueGlow: "Xanh điện",
+    fontStyle: "Kiểu chữ",
+    systemFont: "Loại 1",
+    customFont: "Loại 2",
+    language: "Ngôn ngữ",
+    activity: "Hoạt động gần đây",
+    empty: "Chưa có hoạt động.",
+    created: "Đã tạo cuộc trò chuyện",
+    renamed: "Đã đổi tên cuộc trò chuyện",
+    deleted: "Đã xóa cuộc trò chuyện",
+    message: "Đã gửi tin nhắn",
+    clearAll: "Xóa tất cả",
+    chatHistory: "Lịch sử trò chuyện",
+    noChats: "Chưa có cuộc trò chuyện.",
+    deleteSelected: "Xóa các mục đã chọn",
+    selectActivity: (label: string) => `Chọn hoạt động: ${label}`,
+    selectConversation: (label: string) => `Chọn cuộc trò chuyện: ${label}`,
+    confirmTitle: "Xóa lịch sử và nhật ký?",
+    confirmMessage: "Tất cả cuộc trò chuyện, tin nhắn và nhật ký hoạt động đã lưu trên thiết bị này sẽ bị xóa vĩnh viễn.",
+    cancel: "Hủy",
+    confirm: "Xóa tất cả",
+    close: "Đóng cài đặt",
+  } : {
+    title: "Settings",
+    appearance: "Appearance",
+    theme: "Theme",
+    light: "Light",
+    dark: "Dark",
+    fontSize: "Font size",
+    small: "Small",
+    medium: "Medium",
+    large: "Large",
+    loadingGlow: "Loading glow effect",
+    rainbowGlow: "Rainbow",
+    amberGlow: "Tactical amber",
+    purpleGlow: "Neon purple",
+    blueGlow: "Electric blue",
+    fontStyle: "Font style",
+    systemFont: "Type 1",
+    customFont: "Type 2",
+    language: "Language",
+    activity: "Recent activity",
+    empty: "No recent activity.",
+    created: "Conversation created",
+    renamed: "Conversation renamed",
+    deleted: "Conversation deleted",
+    message: "Message sent",
+    clearAll: "Clear all",
+    chatHistory: "Chat history",
+    noChats: "No conversations yet.",
+    deleteSelected: "Delete selected",
+    selectActivity: (label: string) => `Select activity: ${label}`,
+    selectConversation: (label: string) => `Select conversation: ${label}`,
+    confirmTitle: "Clear history and activity?",
+    confirmMessage: "All conversations, messages, and activity saved on this device will be permanently deleted.",
+    cancel: "Cancel",
+    confirm: "Clear all",
+    close: "Close settings",
+  };
 
   const clearAllData = () => {
     clearConversations();
@@ -170,10 +163,9 @@ export function SettingsDialog({ open, onClose }: SettingsDialogProps) {
     { value: "mono", label: labels.customFont },
   ];
   const languageOptions: { value: AppLanguage; label: string }[] = [
-    { value: "en", label: labels.english },
-    { value: "vi", label: labels.vietnamese },
+    { value: "vi", label: "Tiếng Việt" },
+    { value: "en", label: "English" },
   ];
-
   return (
     <>
     <GlassModal open={open} onClose={onClose} title={labels.title}>
@@ -271,6 +263,9 @@ export function SettingsDialog({ open, onClose }: SettingsDialogProps) {
               </li>
             ) : settings.activities.map((entry) => {
               const activityLabel = labels[entry.type];
+              const activityDetail = entry.detail === "New chat"
+                ? isVietnamese ? "Cuộc trò chuyện mới" : "New chat"
+                : entry.detail;
               return (
                 <li key={entry.id} className="flex items-center gap-2 rounded-xl bg-[var(--glass-bg)] px-2 py-2 transition-colors hover:bg-[var(--glass-highlight)]">
                   <input
@@ -286,7 +281,7 @@ export function SettingsDialog({ open, onClose }: SettingsDialogProps) {
                   />
                   <div className="min-w-0 flex-1">
                     <p className="text-sm">{activityLabel}</p>
-                    {entry.type !== "message" && <p className="truncate text-xs text-fg-muted">{entry.detail}</p>}
+                    {entry.type !== "message" && <p className="truncate text-xs text-fg-muted">{activityDetail}</p>}
                   </div>
                   <time className="shrink-0 text-[11px] text-fg-muted">
                     {new Intl.DateTimeFormat(isVietnamese ? "vi-VN" : "en-US", {
@@ -312,25 +307,30 @@ export function SettingsDialog({ open, onClose }: SettingsDialogProps) {
               <li className="rounded-xl bg-[var(--glass-bg)] px-3 py-2 text-sm text-fg-muted">
                 {labels.noChats}
               </li>
-            ) : conversations.map((conversation) => (
-              <li key={conversation.id} className="flex items-center gap-2 rounded-xl bg-[var(--glass-bg)] px-2 py-2 transition-colors hover:bg-[var(--glass-highlight)]">
-                <input
-                  type="checkbox"
-                  checked={selectedConversationIds.includes(conversation.id)}
-                  aria-label={labels.selectConversation(conversation.title)}
-                  onChange={(event) => setSelectedConversationIds((current) =>
-                    event.target.checked
-                      ? [...current, conversation.id]
-                      : current.filter((id) => id !== conversation.id),
-                  )}
-                  className="h-4 w-4 shrink-0 accent-red-600"
-                />
-                <span className="min-w-0 flex-1 truncate text-sm">{conversation.title}</span>
-                <span className="shrink-0 text-[11px] text-fg-muted">
-                  {conversation.messages.length}
-                </span>
-              </li>
-            ))}
+            ) : conversations.map((conversation) => {
+              const conversationTitle = conversation.title === "New chat"
+                ? isVietnamese ? "Cuộc trò chuyện mới" : "New chat"
+                : conversation.title;
+              return (
+                <li key={conversation.id} className="flex items-center gap-2 rounded-xl bg-[var(--glass-bg)] px-2 py-2 transition-colors hover:bg-[var(--glass-highlight)]">
+                  <input
+                    type="checkbox"
+                    checked={selectedConversationIds.includes(conversation.id)}
+                    aria-label={labels.selectConversation(conversationTitle)}
+                    onChange={(event) => setSelectedConversationIds((current) =>
+                      event.target.checked
+                        ? [...current, conversation.id]
+                        : current.filter((id) => id !== conversation.id),
+                    )}
+                    className="h-4 w-4 shrink-0 accent-red-600"
+                  />
+                  <span className="min-w-0 flex-1 truncate text-sm">{conversationTitle}</span>
+                  <span className="shrink-0 text-[11px] text-fg-muted">
+                    {conversation.messages.length}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </section>
 

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 type MobileDrawerProps = {
   open: boolean;
@@ -10,6 +11,8 @@ type MobileDrawerProps = {
 };
 
 export function MobileDrawer({ open, onClose, children }: MobileDrawerProps) {
+  const { settings } = useAppSettings();
+
   useEffect(() => {
     if (!open) return;
 
@@ -36,7 +39,7 @@ export function MobileDrawer({ open, onClose, children }: MobileDrawerProps) {
           <motion.aside
             role="dialog"
             aria-modal="true"
-            aria-label="Sidebar"
+            aria-label={settings.language === "vi" ? "Thanh bên" : "Sidebar"}
             className="glass absolute inset-y-0 left-0 w-[min(20rem,85vw)] min-w-0 overflow-hidden rounded-r-[28px] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}

@@ -6,9 +6,9 @@ import { Plus, Search, Settings, Sparkles } from "lucide-react";
 import { ConversationItem } from "@/components/sidebar/ConversationItem";
 import { GlassButton } from "@/components/ui/GlassButton";
 import { GlassInput } from "@/components/ui/GlassInput";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { normalizeForSearch } from "@/lib/utils/text";
 import type { Conversation } from "@/types/chat";
-import { useAppSettings } from "@/hooks/useAppSettings";
 
 type SidebarContentProps = {
   conversations: Conversation[];
@@ -84,7 +84,7 @@ export function SidebarContent({
             }
           }}
           placeholder={isVietnamese ? "Tìm cuộc trò chuyện" : "Search chats"}
-          aria-label={isVietnamese ? "Tìm cuộc trò chuyện" : "Search conversations"}
+          aria-label={isVietnamese ? "Tìm cuộc trò chuyện" : "Search chats"}
           className="h-11 min-w-0 max-w-full rounded-[18px] pl-10 pr-3"
         />
       </div>

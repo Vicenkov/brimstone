@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
+import { useAppSettings } from "@/hooks/useAppSettings";
 import { GlassButton } from "@/components/ui/GlassButton";
 
 type GlassModalProps = {
@@ -13,6 +14,7 @@ type GlassModalProps = {
 };
 
 export function GlassModal({ open, onClose, title, children }: GlassModalProps) {
+  const { settings } = useAppSettings();
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
@@ -71,7 +73,7 @@ export function GlassModal({ open, onClose, title, children }: GlassModalProps) 
               </h2>
               <GlassButton
                 variant="ghost"
-                aria-label="Close dialog"
+                aria-label={settings.language === "vi" ? "Đóng hộp thoại" : "Close dialog"}
                 onClick={onClose}
                 className="h-9 w-9 px-0"
               >
